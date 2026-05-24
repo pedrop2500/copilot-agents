@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-05-24",
+  "agents": [
+    {
+      "id": "code-reviewer",
+      "name": "Code Reviewer",
+      "description": "Revisa tu código en busca de bugs, problemas de rendimiento y mejoras",
+      "instructionsFile": "agents/code-reviewer/instructions.md",
+      "icon": "eye"
+    },
+    {
+      "id": "docs-writer",
+      "name": "Docs Writer",
+      "description": "Escribe documentación para tu código en Markdown o JSDoc",
+      "instructionsFile": "agents/docs-writer/instructions.md",
+      "icon": "book"
+    }
+  ]
+}

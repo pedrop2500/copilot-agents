@@ -1,0 +1,9 @@
+.vscode/**
+src/**
+node_modules/**
+*.ts
+!dist/**
+tsconfig.json
+webpack.config.js
+.eslintrc.json
+*.map

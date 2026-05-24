@@ -1,0 +1,67 @@
+{
+  "name": "copilot-agents",
+  "displayName": "Copilot Agents",
+  "description": "Carga agentes de Copilot Chat dinámicamente desde un repositorio de GitHub",
+  "version": "0.1.0",
+  "publisher": "pedrop2500",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedrop2500/copilot-agents"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["AI", "Chat"],
+  "keywords": ["copilot", "chat", "ai", "agents", "github"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "copilot-agents.hub",
+        "name": "copilot-agents",
+        "description": "Agentes de IA cargados automáticamente desde GitHub",
+        "isSticky": false,
+        "commands": [
+          {
+            "name": "help",
+            "description": "Lista todos los agentes disponibles"
+          }
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "copilotAgents.refresh",
+        "title": "Copilot Agents: Actualizar agentes desde GitHub",
+        "icon": "$(sync)"
+      }
+    ],
+    "configuration": {
+      "title": "Copilot Agents",
+      "properties": {
+        "copilotAgents.repoRawUrl": {
+          "type": "string",
+          "default": "https://raw.githubusercontent.com/pedrop2500/copilot-agents/main",
+          "description": "URL base del contenido raw de tu repositorio de GitHub (sin barra final)",
+          "scope": "application"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "ts-loader": "^9.5.1",
+    "@vscode/vsce": "^3.0.0"
+  }
+}

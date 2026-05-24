@@ -1,0 +1,65 @@
+name: Validate Agents
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'agents/**'
+  pull_request:
+    paths:
+      - 'agents/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate agents/index.json structure
+        run: |
+          node -e "
+            const fs = require('fs');
+
+            const raw = fs.readFileSync('agents/index.json', 'utf8');
+            const index = JSON.parse(raw);
+
+            const errors = [];
+
+            if (!index.version) errors.push('Falta campo: version');
+            if (!Array.isArray(index.agents)) errors.push('Falta campo: agents (array)');
+
+            for (const agent of (index.agents ?? [])) {
+              if (!agent.id)               errors.push(\`Agente sin id: \${JSON.stringify(agent)}\`);
+              if (!agent.name)             errors.push(\`Agente sin name: \${agent.id}\`);
+              if (!agent.description)      errors.push(\`Agente sin description: \${agent.id}\`);
+              if (!agent.instructionsFile) errors.push(\`Agente sin instructionsFile: \${agent.id}\`);
+              else if (!fs.existsSync(agent.instructionsFile)) {
+                errors.push(\`Archivo no encontrado: \${agent.instructionsFile} (agente: \${agent.id})\`);
+              }
+            }
+
+            if (errors.length) {
+              console.error('Errores de validación:');
+              errors.forEach(e => console.error(' -', e));
+              process.exit(1);
+            }
+
+            console.log('OK — Agentes válidos:', index.agents.map(a => a.id).join(', '));
+          "
+
+      - name: Check instructions files are not empty
+        run: |
+          node -e "
+            const fs = require('fs');
+            const index = JSON.parse(fs.readFileSync('agents/index.json', 'utf8'));
+            let ok = true;
+            for (const agent of index.agents) {
+              const content = fs.readFileSync(agent.instructionsFile, 'utf8').trim();
+              if (content.length < 50) {
+                console.error('Instrucciones demasiado cortas para:', agent.id);
+                ok = false;
+              }
+            }
+            if (!ok) process.exit(1);
+            console.log('OK — Todos los archivos de instrucciones tienen contenido.');
+          "
